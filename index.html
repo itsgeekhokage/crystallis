@@ -1,0 +1,1168 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Genomic Diagnostics Startup - Pioneering Health Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --primary-color: #0077b6; /* Deep Ocean Blue */
+        --secondary-color: #00b4d8; /* Bright Cyan */
+        --accent-color: #90e0ef; /* Pale Blue */
+        --bg-color: #f8fafc; /* Light Gray */
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+      }
+      .text-primary {
+        color: var(--primary-color);
+      }
+      .bg-primary {
+        background-color: var(--primary-color);
+      }
+      .border-secondary {
+        border-color: var(--secondary-color);
+      }
+      .hover\:bg-secondary:hover {
+        background-color: var(--secondary-color);
+      }
+      .hero-bg {
+        background-image: linear-gradient(
+            180deg,
+            rgba(250, 252, 255, 0.95),
+            rgba(240, 247, 255, 0.85)
+          ),
+          url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' fill='none'><pattern id='hex' width='20' height='17.32' patternUnits='userSpaceOnUse'><path d='M10 0 L20 5 L20 12.32 L10 17.32 L0 12.32 L0 5 Z' stroke='%23dbeafe' stroke-width='1' fill='none' opacity='0.4'/></pattern><rect width='100%' height='100%' fill='url(%23hex)'/></svg>");
+        background-size: cover;
+        background-position: center;
+      }
+
+      /* Custom scrollbar for better aesthetics */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 10px;
+      }
+
+      /* Styles for service tabs */
+      .service-tab {
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        font-weight: 500;
+        color: #4b5563; /* Gray */
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap; /* Prevent wrapping in tabs */
+      }
+      .service-tab:hover {
+        border-bottom-color: var(--accent-color);
+      }
+      .service-tab.active-tab {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Firebase Initialization and Auth Setup (Mandatory) -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        signInWithCustomToken,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        setLogLevel,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // Set log level for debugging
+      setLogLevel("Debug");
+
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+      const firebaseConfig = JSON.parse(
+        typeof __firebase_config !== "undefined" ? __firebase_config : "{}"
+      );
+      const initialAuthToken =
+        typeof __initial_auth_token !== "undefined"
+          ? __initial_auth_token
+          : null;
+
+      if (Object.keys(firebaseConfig).length > 0) {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Authentication
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            console.log("Firebase Auth Ready. User ID:", user.uid);
+            // Firestore operations can begin here, secured by rules.
+          } else {
+            console.log("No user signed in. Attempting sign-in...");
+            try {
+              if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+              } else {
+                await signInAnonymously(auth);
+              }
+            } catch (error) {
+              console.error("Firebase Auth Error:", error);
+            }
+          }
+        });
+      } else {
+        console.warn(
+          "Firebase config not available. Running in non-persistent mode."
+        );
+      }
+    </script>
+
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 shadow-md bg-white">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo/Brand -->
+          <a
+            href="#home"
+            class="flex-shrink-0 font-bold text-2xl text-primary">
+            Crystallis
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex space-x-6 lg:space-x-8">
+            <a
+              href="#home"
+              class="text-gray-600 hover:text-primary transition duration-150"
+              >Home</a
+            >
+            <a
+              href="#about"
+              class="text-gray-600 hover:text-primary transition duration-150"
+              >About Us</a
+            >
+            <a
+              href="#services"
+              class="text-gray-600 hover:text-primary transition duration-150 font-semibold"
+              >Services</a
+            >
+            <a
+              href="#rnd"
+              class="text-gray-600 hover:text-primary transition duration-150"
+              >R & D / Products</a
+            >
+            <a
+              href="#careers"
+              class="text-gray-600 hover:text-primary transition duration-150"
+              >Careers</a
+            >
+            <a
+              href="#contact"
+              class="px-3 py-1.5 rounded-full bg-primary text-white hover:bg-secondary transition duration-300 shadow-lg"
+              >Contact Us</a
+            >
+          </nav>
+
+          <!-- Mobile Menu Button -->
+          <button
+            id="mobile-menu-button"
+            class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu (Hidden by default) -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-white shadow-lg border-t border-gray-100">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="#home"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >Home</a
+          >
+          <a
+            href="#about"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >About Us</a
+          >
+          <a
+            href="#services"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >Services</a
+          >
+          <a
+            href="#rnd"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >R & D / Products</a
+          >
+          <a
+            href="#careers"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+            >Careers</a
+          >
+          <a
+            href="#contact"
+            class="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary mt-2"
+            >Contact Us</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- 1. Home / Hero Section -->
+      <section
+        id="home"
+        class="hero-bg py-20 md:py-32">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1
+            class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+            Pioneering Precision Health Through
+            <span class="text-primary">Genomic Insight</span>
+          </h1>
+          <p class="mt-4 text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
+            From Next-Generation Sequencing to Personalized Wellness—we empower
+            research, clinical diagnostics, and R&D.
+          </p>
+          <div class="mt-8 flex justify-center space-x-4">
+            <a
+              href="#services"
+              class="px-6 py-3 bg-primary text-white font-semibold rounded-lg shadow-xl hover:bg-secondary transition duration-300 transform hover:scale-105">
+              Explore Our Services
+            </a>
+            <a
+              href="#rnd"
+              class="px-6 py-3 border border-primary text-primary font-semibold rounded-lg hover:bg-primary/10 transition duration-300 transform hover:scale-105">
+              Discover R & D
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. About Us Section (Includes Director Messages) -->
+      <section
+        id="about"
+        class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">
+            About Us: Driving Genomic Innovation
+          </h2>
+
+          <div class="max-w-4xl mx-auto text-lg text-gray-700 space-y-6">
+            <p>
+              We are a leading diagnostic and research lab focused on leveraging
+              the power of genomics to transform healthcare and scientific
+              discovery. Our mission is to provide high-quality, actionable
+              genomic data across clinical, research, and educational domains.
+              We believe that precision health begins with precise data.
+            </p>
+            <p>
+              Our team comprises world-class geneticists, bioinformaticians, and
+              healthcare professionals dedicated to setting new benchmarks in
+              genomic testing and analysis.
+            </p>
+          </div>
+
+          <!-- Director Messages -->
+          <div
+            id="director-messages"
+            class="mt-16 pt-8 border-t border-accent-color">
+            <h3 class="text-2xl font-semibold text-primary text-center mb-8">
+              Director's Message
+            </h3>
+            <div class="max-w-2xl mx-auto p-6 bg-gray-50 rounded-xl shadow-lg">
+              <blockquote class="italic text-gray-700 leading-relaxed">
+                "The next frontier in medicine is written in our DNA. By
+                investing in robust R&D, developing Indian-origin specific
+                panels, and fostering the next generation of genomic scientists
+                through our training programs, we are not just analyzing data—we
+                are building the future of personalized medicine."
+              </blockquote>
+              <p class="mt-4 text-right font-medium text-gray-900">
+                — [Director Name], CEO & Founder
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Services Section (Detailed & Collapsible) -->
+      <section
+        id="services"
+        class="py-16 md:py-24 bg-bg-color">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">
+            Comprehensive Genomic Services
+          </h2>
+
+          <!-- Main Service Tabs -->
+          <div
+            class="flex flex-wrap justify-center mb-8 border-b border-primary/20 overflow-x-auto">
+            <button
+              data-tab="research"
+              class="service-tab active-tab">
+              Research Services
+            </button>
+            <button
+              data-tab="clinical"
+              class="service-tab">
+              Clinical Services
+            </button>
+            <button
+              data-tab="education"
+              class="service-tab">
+              Educational Programs
+            </button>
+            <button
+              data-tab="wellness"
+              class="service-tab">
+              Genomic Wellness
+            </button>
+            <button
+              data-tab="pharma"
+              class="service-tab">
+              Pharmacogenomics
+            </button>
+          </div>
+
+          <div id="service-content-container">
+            <!-- 3.1 Research Services Content -->
+            <div
+              id="content-research"
+              class="service-content active-content">
+              <h3 class="text-2xl font-semibold text-primary mb-6">
+                Research Services: Advancing Discovery
+              </h3>
+              <div class="grid md:grid-cols-2 gap-8">
+                <!-- Research Service Card 1: Sanger -->
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                  <h4 class="text-xl font-bold text-gray-800 mb-3">
+                    Sanger Sequencing
+                  </h4>
+                  <ul
+                    class="list-disc list-inside text-gray-600 space-y-1 pl-4 text-sm">
+                    <li>Microbial Identification (16S/18S /ITS/26S rRNA)</li>
+                    <li>Microsatellite Genotyping</li>
+                    <li>Cattle Genotyping</li>
+                  </ul>
+                </div>
+                <!-- Research Service Card 2: NGS -->
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                  <h4 class="text-xl font-bold text-gray-800 mb-3">
+                    Next Generation Sequencing (NGS)
+                  </h4>
+                  <p class="text-sm text-gray-600 mb-2">
+                    Comprehensive solutions across RNA, DNA, and Microbial
+                    samples.
+                  </p>
+                  <div class="space-y-4 text-sm">
+                    <h5 class="font-semibold text-gray-700">
+                      DNA / RNA Sequencing:
+                    </h5>
+                    <p>
+                      Whole Crystallis/Exome, HLA Typing, Methylation, Amplicon
+                      Sequencing, ChIP Sequencing, mRNA/Total/Small/Single Cell
+                      RNA Sequencing.
+                    </p>
+                    <h5 class="font-semibold text-gray-700">
+                      Microbial Sequencing:
+                    </h5>
+                    <p>
+                      WGM (Shotgun Metagenomics), 16sRNA Sequencing, WGS
+                      (Microbial Monoculture).
+                    </p>
+                  </div>
+                </div>
+                <!-- Research Service Card 3: RT-PCR -->
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                  <h4 class="text-xl font-bold text-gray-800 mb-3">
+                    Gene Expression (RT-PCR)
+                  </h4>
+                  <p class="text-sm text-gray-600">
+                    Services include gene expression, miRNA expression, SNP
+                    genotyping, copy number variation, and absolute
+                    quantification. Supports both TaqMan and SYBR Green
+                    chemistry.
+                  </p>
+                </div>
+                <!-- Research Service Card 4: Microarray -->
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                  <h4 class="text-xl font-bold text-gray-800 mb-3">
+                    Microarray Analysis
+                  </h4>
+                  <ul
+                    class="list-disc list-inside text-gray-600 space-y-1 pl-4 text-sm">
+                    <li>Infinium Genotyping</li>
+                    <li>Crystallis Wide Association Studies (GWAS)</li>
+                    <li>Methylation Assays</li>
+                    <li>Agrigenomics Consortium Arrays</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-8 p-4 bg-accent-color/30 rounded-lg">
+                <h4 class="font-semibold text-primary">
+                  Supported Organisms & Samples:
+                </h4>
+                <p class="text-sm text-gray-800">
+                  Bacteria, Virus, Protists, Fungi, Plants, Animals, Humans.
+                  Samples from Blood, Tissue, Soil, Stool, Saliva, CSF, FFPE &
+                  more.
+                </p>
+              </div>
+            </div>
+
+            <!-- 3.2 Clinical Services Content -->
+            <div
+              id="content-clinical"
+              class="service-content hidden">
+              <h3 class="text-2xl font-semibold text-primary mb-6">
+                Clinical Diagnostics: Personalized Patient Care
+              </h3>
+
+              <!-- Reproductive Health -->
+              <div class="mb-12">
+                <h4 class="text-xl font-bold text-gray-900 mb-4">
+                  Reproductive Health
+                </h4>
+                <p class="text-gray-700 mb-6 max-w-3xl">
+                  Planning a family is exciting—but it can also come with
+                  questions and uncertainties. Our advanced reproductive health
+                  tests give you clarity, confidence, and peace of mind at every
+                  step. From conception to pregnancy, we combine science with
+                  care to support your journey toward a healthy baby.
+                </p>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <!-- NIPT -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      NIPT (Non-Invasive Prenatal Testing)
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      A simple blood test reads your baby’s DNA to check for
+                      chromosomal conditions—completely safe for both mother and
+                      child.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Maternal blood.
+                    </p>
+                  </div>
+                  <!-- Double Marker Test -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Double Marker Test
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Early-pregnancy screening that combines blood markers and
+                      ultrasound to assess chromosomal risks. It helps you start
+                      your journey with reassurance and informed choices.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Maternal blood + NT scan report.
+                    </p>
+                  </div>
+                  <!-- Quadruple Marker Test -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Quadruple Marker Test
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      A second-trimester blood test measuring four key markers
+                      to assess fetal chromosomal health. Provides additional
+                      clarity when early testing wasn’t done.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Maternal blood.
+                    </p>
+                  </div>
+                  <!-- Couple Karyotyping -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Couple Karyotyping
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Looks at both partners’ chromosomes to detect hidden
+                      genetic risks that could affect pregnancy. Empowers
+                      couples to plan with knowledge and confidence.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood from both partners.
+                    </p>
+                  </div>
+                  <!-- CNV Sequencing -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Copy Number Variation (CNV) Sequencing
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Scans the Crystallis for tiny DNA changes that may impact
+                      development. Delivers deep insights when standard tests
+                      leave questions unanswered.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or extracted DNA.
+                    </p>
+                  </div>
+                  <!-- Aneuploidy Detection by QF-PCR -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Aneuploidy Detection by QF-PCR
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Rapidly identifies common chromosomal abnormalities like
+                      Down, Edwards, or Patau syndromes. Gives fast, reliable
+                      reassurance during pregnancy.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Amniotic fluid / Chorionic villi / Fetal blood.
+                    </p>
+                  </div>
+                  <!-- Exome Sequencing -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Exome Sequencing
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Decodes all gene-coding regions to uncover rare or complex
+                      genetic conditions. Transforms DNA mysteries into
+                      actionable insights for your family.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or extracted DNA.
+                    </p>
+                  </div>
+                  <!-- HPV Genotyping -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      HPV Genotyping
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Detects high-risk HPV strains linked to cervical cancer,
+                      even before symptoms appear. Supports proactive women’s
+                      health with early detection.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Cervical/vaginal swab.
+                    </p>
+                  </div>
+                  <!-- BRCA1 & BRCA2 Screening -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      BRCA1 & BRCA2 Screening
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Identifies inherited risks for breast and ovarian cancer.
+                      Enables preventive planning and informed health decisions.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or saliva.
+                    </p>
+                  </div>
+                  <!-- Couple Carrier Screening -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-secondary">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Couple Carrier Screening
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Checks if partners carry genetic conditions that could
+                      affect future pregnancies. Transforms family planning into
+                      an empowered and informed journey.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood from both partners.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Oncology -->
+              <div>
+                <h4 class="text-xl font-bold text-gray-900 mb-4">Oncology</h4>
+                <p class="text-gray-700 mb-6 max-w-3xl">
+                  Cancer can feel overwhelming, but knowledge is power. Our
+                  advanced tests help you see what’s hidden, understand your
+                  risks, and make decisions with confidence. From inherited
+                  risks to real-time monitoring, we bring precision, care, and
+                  hope to every step of your journey.
+                </p>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <!-- HRD Testing -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      HRD Testing
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Some cancers have hidden DNA repair weaknesses—HRD testing
+                      uncovers them so your doctor can choose the most effective
+                      targeted therapies.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Tumor tissue or blood.
+                    </p>
+                  </div>
+                  <!-- HRR Testing -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      HRR Testing
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      When DNA repair goes wrong, cancers can progress silently.
+                      HRR testing detects these issues, guiding smarter,
+                      personalized treatment plans.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Tumor tissue or blood.
+                    </p>
+                  </div>
+                  <!-- Hereditary Cancer Panel -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Hereditary Cancer Panel
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Cancer doesn’t always start out of the blue. This test
+                      looks for inherited gene changes so you and your family
+                      can act early and stay proactive.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or saliva.
+                    </p>
+                  </div>
+                  <!-- HBOC Panel -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      HBOC Panel
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Know your BRCA status and related gene risks to protect
+                      against breast and ovarian cancers—before they strike.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or saliva.
+                    </p>
+                  </div>
+                  <!-- Liquid Biopsy -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Liquid Biopsy
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      A simple blood test can reveal tumor DNA circulating in
+                      your body—catching cancer early, monitoring treatment, or
+                      spotting recurrence.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">Sample: Blood.</p>
+                  </div>
+                  <!-- Other Cancer Panels -->
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-md border-t-4 border-accent-color">
+                    <h5 class="font-bold text-lg text-gray-800 mb-2">
+                      Other Cancer Panels
+                    </h5>
+                    <p class="text-gray-600 text-sm">
+                      Tailored panels check multiple cancer-related genes to
+                      help your doctor design treatment uniquely for you.
+                    </p>
+                    <p class="text-xs text-gray-500 mt-2">
+                      Sample: Blood or tumor tissue.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3.3 Educational/Training Content -->
+            <div
+              id="content-education"
+              class="service-content hidden">
+              <h3 class="text-2xl font-semibold text-primary mb-6">
+                Educational/Training Services: Shaping Future Experts
+              </h3>
+              <div class="space-y-4 text-gray-700 max-w-2xl">
+                <p>
+                  We offer specialized training designed for students and
+                  professionals to master the latest genomic techniques and
+                  bioinformatics analysis.
+                </p>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                  <li>Online Training & Workshops</li>
+                  <li>Hands-On Lab Training</li>
+                  <li>Advanced Bioinformatics Training</li>
+                  <li>Short Term Training & Certification</li>
+                  <li>Project, Dissertation, and Internship Opportunities</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 3.4 Predictiva/Genora/Genomic Wellness Content -->
+            <div
+              id="content-wellness"
+              class="service-content hidden">
+              <h3 class="text-2xl font-semibold text-primary mb-6">
+                Genomic Wellness & Risk Assessment (Predictiva/Genora)
+              </h3>
+              <div class="bg-primary/10 p-6 rounded-xl shadow">
+                <p class="text-lg font-medium text-gray-800">
+                  Our comprehensive panels sequence over 22,000 genes to assess
+                  risk factors for 250+ genetic disorders. Empowering proactive
+                  health management through deep genomic insights.
+                </p>
+              </div>
+            </div>
+
+            <!-- 3.5 Pharmacogenomics Content -->
+            <div
+              id="content-pharma"
+              class="service-content hidden">
+              <h3 class="text-2xl font-semibold text-primary mb-6">
+                Pharmacogenomics: Optimizing Drug Response
+              </h3>
+              <p class="mb-4 text-gray-700">
+                Personalized medication insights to predict drug efficacy and
+                adverse effects across therapeutic areas:
+              </p>
+              <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">
+                    Psychiatric Medications
+                  </h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">Cardiac Medications</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">Pain Management Drugs</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">Oncology Treatments</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">
+                    Diabetes & Cholesterol Meds
+                  </h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow">
+                  <h4 class="font-bold text-gray-800">Anticoagulants</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. R & D / Products Section -->
+      <section
+        id="rnd"
+        class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">
+            R & D: Our Innovation Pipeline
+          </h2>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- R&D Card 1: NIPT Alternatives -->
+            <div
+              class="p-6 rounded-xl shadow-lg border-t-4 border-primary bg-gray-50">
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Cost-Effective NIPT Alternatives
+              </h3>
+              <p class="text-gray-600 text-sm">
+                Developing cost-effective, high-sensitivity alternatives to
+                current NIPT methods, particularly suited for
+                resource-constrained settings.
+              </p>
+            </div>
+
+            <!-- R&D Card 2: Liquid Biopsy -->
+            <div
+              class="p-6 rounded-xl shadow-lg border-t-4 border-secondary bg-gray-50">
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Early Cancer Detection (Liquid Biopsy)
+              </h3>
+              <ul
+                class="list-disc list-inside text-gray-600 space-y-1 pl-4 text-sm">
+                <li>Circulating tumor DNA (ctDNA)</li>
+                <li>Methylation profiling</li>
+                <li>Cancer-specific mutation panels</li>
+              </ul>
+            </div>
+
+            <!-- R&D Card 3: Indian-Origin Panels -->
+            <div
+              class="p-6 rounded-xl shadow-lg border-t-4 border-accent-color bg-gray-50">
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Indian-Origin Specific NGS Panels
+              </h3>
+              <p class="text-gray-600 text-sm">
+                Creating Next-Generation Sequencing (NGS) panels tailored to the
+                unique genetic diversity of the Indian subcontinent.
+              </p>
+            </div>
+
+            <!-- R&D Card 4: Tech Platforms -->
+            <div
+              class="p-6 rounded-xl shadow-lg border-t-4 border-primary bg-gray-50">
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Proprietary Technology Platforms
+              </h3>
+              <ul
+                class="list-disc list-inside text-gray-600 space-y-1 pl-4 text-sm">
+                <li>
+                  Proprietary bioinformatics pipelines for variant annotation,
+                  interpretation, and clinical reporting.
+                </li>
+                <li>
+                  Use of machine learning algorithms for pattern detection in
+                  large genomic datasets.
+                </li>
+                <li>
+                  Building cloud-based platforms for clinicians to access
+                  actionable insights from genomic data.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. Careers Section -->
+      <section
+        id="careers"
+        class="py-16 bg-bg-color">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Join Our Team</h2>
+          <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
+            Be a part of a mission-driven organization at the forefront of
+            genomic diagnostics. We are looking for passionate scientists,
+            bioinformaticians, and healthcare experts.
+          </p>
+          <a
+            href="#contact"
+            class="px-6 py-3 border border-primary text-primary font-semibold rounded-lg hover:bg-primary/10 transition duration-300">
+            View Openings (Coming Soon)
+          </a>
+        </div>
+      </section>
+
+      <!-- 9. Blogs & 10. Partners (Combined as utility section) -->
+      <!-- <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid md:grid-cols-2 gap-12">
+            Blogs -->
+            <!-- <div>
+              <h3 class="text-2xl font-bold text-primary mb-4">
+                Latest Insights (Blogs)
+              </h3>
+              <div class="space-y-4">
+                <div class="p-4 border border-gray-100 rounded-lg">
+                  <p class="font-semibold text-gray-900">
+                    The Role of AI in Variant Annotation
+                  </p>
+                  <span class="text-sm text-gray-500">June 14, 2025</span>
+                </div>
+                <div class="p-4 border border-gray-100 rounded-lg">
+                  <p class="font-semibold text-gray-900">
+                    Understanding Pharmacogenomics in Pain Management
+                  </p>
+                  <span class="text-sm text-gray-500">May 28, 2025</span>
+                </div>
+              </div>
+            </div>
+            Partners -->
+            <!-- <div>
+              <h3 class="text-2xl font-bold text-primary mb-4">
+                Our Trusted Partners
+              </h3>
+              <div class="flex flex-wrap items-center space-x-6">
+                <img
+                  src="https://placehold.co/100x40/cccccc/333333?text=University+A"
+                  alt="Partner Logo"
+                  class="h-10 opacity-75 hover:opacity-100 transition" />
+                <img
+                  src="https://placehold.co/100x40/cccccc/333333?text=Pharma+Co"
+                  alt="Partner Logo"
+                  class="h-10 opacity-75 hover:opacity-100 transition" />
+                <img
+                  src="https://placehold.co/100x40/cccccc/333333?text=Tech+Firm"
+                  alt="Partner Logo"
+                  class="h-10 opacity-75 hover:opacity-100 transition" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> -->
+
+     <!-- 5. Contact Us Section -->
+<section style="
+  padding:60px 30px;
+  text-align:center;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border-radius:16px;
+  margin:60px auto;
+  max-width:650px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  border:1px solid rgba(0, 102, 153, 0.1);
+  backdrop-filter: blur(6px);
+">
+  <h2 style="
+    font-size:28px;
+    margin-bottom:14px;
+    color:#0c4a6e;
+    font-weight:700;
+    letter-spacing:0.3px;
+  ">
+    Mail Us
+  </h2>
+
+  <p style="
+    font-size:19px;
+    color:#475569;
+    margin:0;
+  ">
+    <a href="mailto:support@crystallishl.com" style="
+      color:#0369a1;
+      text-decoration:none;
+      font-weight:600;
+      padding:10px 16px;
+      border-radius:10px;
+      display:inline-block;
+      background:#e0f2fe;
+      transition:0.25s ease;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    "
+    onmouseover="this.style.background='#bae6fd'; this.style.transform='translateY(-2px)';"
+    onmouseout="this.style.background='#e0f2fe'; this.style.transform='translateY(0)';">
+      support@crystallishl.com
+    </a>
+  </p>
+</section>
+
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div>
+            <h5 class="font-bold mb-3 text-lg">Company</h5>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li>
+                <a
+                  href="#about"
+                  class="hover:text-secondary"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#director-messages"
+                  class="hover:text-secondary"
+                  >Director Messages</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#careers"
+                  class="hover:text-secondary"
+                  >Careers</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#contact"
+                  class="hover:text-secondary"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h5 class="font-bold mb-3 text-lg">Services</h5>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-secondary"
+                  >Research Services</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-secondary"
+                  >Clinical Services</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-secondary"
+                  >Genomic Wellness</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-secondary"
+                  >Pharmacogenomics</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h5 class="font-bold mb-3 text-lg">R & D</h5>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li>
+                <a
+                  href="#rnd"
+                  class="hover:text-secondary"
+                  >Innovation Pipeline</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#rnd"
+                  class="hover:text-secondary"
+                  >NIPT Alternatives</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#rnd"
+                  class="hover:text-secondary"
+                  >Liquid Biopsy</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#rnd"
+                  class="hover:text-secondary"
+                  >Technology Platforms</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h5 class="font-bold mb-3 text-lg">Resources</h5>
+            <ul class="space-y-2 text-sm text-gray-300">
+              <li>
+                <a
+                  href="#blogs"
+                  class="hover:text-secondary"
+                  >Blogs</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#partners"
+                  class="hover:text-secondary"
+                  >Trusted Partners</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="hover:text-secondary"
+                  >Training Programs</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="mt-10 pt-6 border-t border-gray-700 text-center text-sm text-gray-400">
+          &copy; 2025 Crystallis health innovations Pvt ltd. All rights
+          reserved.
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+      // ----------------------------------------------------------------------
+      // Mobile Menu Toggle
+      // ----------------------------------------------------------------------
+      document
+        .getElementById("mobile-menu-button")
+        .addEventListener("click", () => {
+          const menu = document.getElementById("mobile-menu");
+          menu.classList.toggle("hidden");
+        });
+
+      // ----------------------------------------------------------------------
+      // Service Tab Switching Logic
+      // ----------------------------------------------------------------------
+      document.querySelectorAll(".service-tab").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const targetTab = e.target.getAttribute("data-tab");
+
+          // 1. Deactivate all tabs and hide all content
+          document.querySelectorAll(".service-tab").forEach((btn) => {
+            btn.classList.remove("active-tab");
+          });
+          document.querySelectorAll(".service-content").forEach((content) => {
+            content.classList.add("hidden");
+            content.classList.remove("active-content");
+          });
+
+          // 2. Activate the clicked tab
+          e.target.classList.add("active-tab");
+
+          // 3. Show the corresponding content
+          const contentElement = document.getElementById(
+            `content-${targetTab}`
+          );
+          if (contentElement) {
+            contentElement.classList.remove("hidden");
+            contentElement.classList.add("active-content");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
